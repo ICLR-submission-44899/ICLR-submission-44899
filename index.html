@@ -1,0 +1,394 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>MiniWAM Supplementary Material</title>
+<meta name="description" content="Anonymous supplementary videos for ICLR 2027 submission 44899.">
+<script>
+  // Theme follows local time (dark from 19:00 to 07:00); a manual choice holds until the next switch.
+  window.pageTheme = (function () {
+    var NIGHT_START = 19, NIGHT_END = 7, KEY = 'miniwam-theme';
+    function hours(d) { return d.getHours() + d.getMinutes() / 60; }
+    function scheduled(d) {
+      var h = hours(d || new Date());
+      return h >= NIGHT_END && h < NIGHT_START ? 'light' : 'dark';
+    }
+    function nextSwitch(d) {
+      d = d || new Date();
+      var n = new Date(d.getTime()), h = hours(d);
+      if (h < NIGHT_END) n.setHours(NIGHT_END, 0, 0, 0);
+      else if (h < NIGHT_START) n.setHours(NIGHT_START, 0, 0, 0);
+      else { n.setDate(n.getDate() + 1); n.setHours(NIGHT_END, 0, 0, 0); }
+      return n;
+    }
+    function override() {
+      try {
+        var o = JSON.parse(localStorage.getItem(KEY));
+        if (o && o.until > Date.now() && (o.theme === 'light' || o.theme === 'dark')) return o;
+        localStorage.removeItem(KEY);
+      } catch (e) {}
+      return null;
+    }
+    function desired() { var o = override(); return o ? o.theme : scheduled(); }
+    function choose(theme) {
+      try {
+        if (theme === scheduled()) localStorage.removeItem(KEY);
+        else localStorage.setItem(KEY, JSON.stringify({ theme: theme, until: nextSwitch().getTime() }));
+      } catch (e) {}
+    }
+    document.documentElement.setAttribute('data-theme', desired());
+    return { scheduled: scheduled, override: override, desired: desired, choose: choose, night: '19:00–07:00' };
+  })();
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400..700&family=JetBrains+Mono:wght@400;500&family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..500&family=Ubuntu+Mono:ital,wght@0,400;1,400&display=swap">
+<link rel="stylesheet" href="style.css">
+<script src="app.js" defer></script>
+<script src="bottleneck.js" defer></script>
+</head>
+<body>
+<div class="frame">
+  <header class="top">
+    <a class="top-name" href="#top">MiniWAM</a>
+    <nav aria-label="Sections">
+      <a href="#rollouts"><span class="nav-ref">Fig. S1</span>Policy rollouts</a>
+      <a href="#neighbors"><span class="nav-ref">Fig. S2 · Tab. S1–S2</span>Nearest neighbors</a>
+      <a href="#predictions"><span class="nav-ref">Fig. S3</span>Future predictions</a>
+      <a href="#real-robot"><span class="nav-ref">Fig. S4</span>Real robot</a>
+      <button class="theme-btn" id="theme-toggle" type="button" aria-label="Switch theme">
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </nav>
+  </header>
+
+  <section class="hero" id="top">
+    <div class="rail" aria-hidden="true"></div>
+    <div class="hero-text">
+      <h1 class="title">MiniWAM Supplementary Material</h1>
+      <p class="subtitle">Learning Compact Future Targets for Efficient World-Action Modeling</p>
+      <p class="anon">Anonymous authors · Videos and tables for the author response</p>
+      <ul class="cats">
+        <li><a class="cat" href="#rollouts"><span class="ref">Figure S1</span>Closed-loop policy rollouts<small>LIBERO · LIBERO-Plus · RoboTwin 2.0</small></a></li>
+        <li><a class="cat" href="#neighbors"><span class="ref">Figure S2 · Tables S1–S2</span>Nearest-neighbor retrieval<small>Native vs. PRISM on unseen LIBERO-90 tasks</small></a></li>
+        <li><a class="cat" href="#predictions"><span class="ref">Figure S3</span>Native Wan-VAE future predictions<small>Predicted vs. recorded video</small></a></li>
+        <li><a class="cat" href="#real-robot"><span class="ref">Figure S4</span>Real-robot rollouts<small>MiniWAM vs. native on a dual-arm Franka</small></a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" id="rollouts">
+    <h2 class="rail"><span class="ref">Figure S1</span>Rollouts<small>LIBERO · LIBERO-Plus · RoboTwin 2.0</small></h2>
+    <div class="body">
+      <p class="intro"><strong class="ref">Figure S1.</strong> Successful closed-loop episodes of the 0.25B MiniWAM policy. The LIBERO-Plus perturbations and the RoboTwin 2.0 randomized scenes are unseen during training.</p>
+      <div class="demos">
+        <div class="demo-group">
+          <h3 id="fig-s1a">(a) LIBERO <span>standard evaluation</span></h3>
+          <div class="demo-row">
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/libero-spatial.jpg" width="512" height="232" aria-label="LIBERO-Spatial rollout: pick up the black bowl between the plate and the ramekin and place it on the plate"><source src="assets/libero-spatial.mp4" type="video/mp4"></video>
+              <figcaption>Pick up the black bowl between the plate and the ramekin and place it on the plate.<small>LIBERO-Spatial</small></figcaption>
+            </figure>
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/libero-goal.jpg" width="512" height="232" aria-label="LIBERO-Goal rollout: open the top drawer and put the bowl inside"><source src="assets/libero-goal.mp4" type="video/mp4"></video>
+              <figcaption>Open the top drawer and put the bowl inside.<small>LIBERO-Goal</small></figcaption>
+            </figure>
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/libero-10.jpg" width="512" height="232" aria-label="LIBERO-10 rollout: put the yellow and white mug in the microwave and close it"><source src="assets/libero-10.mp4" type="video/mp4"></video>
+              <figcaption>Put the yellow and white mug in the microwave and close it.<small>LIBERO-10</small></figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="demo-group">
+          <h3 id="fig-s1b">(b) LIBERO-Plus <span>perturbed scenes</span></h3>
+          <div class="demo-row">
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/plus-camera.jpg" width="512" height="256" aria-label="LIBERO-Plus rollout with perturbed camera viewpoints: put both the alphabet soup and the tomato sauce in the basket"><source src="assets/plus-camera.mp4" type="video/mp4"></video>
+              <figcaption>Put both the alphabet soup and the tomato sauce in the basket.<small>Camera viewpoints</small></figcaption>
+            </figure>
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/plus-light.jpg" width="512" height="256" aria-label="LIBERO-Plus rollout with perturbed light conditions: pick up the milk and place it in the basket"><source src="assets/plus-light.mp4" type="video/mp4"></video>
+              <figcaption>Pick up the milk and place it in the basket.<small>Light conditions</small></figcaption>
+            </figure>
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/plus-texture.jpg" width="512" height="256" aria-label="LIBERO-Plus rollout with perturbed background textures: turn on the stove and put the moka pot on it"><source src="assets/plus-texture.mp4" type="video/mp4"></video>
+              <figcaption>Turn on the stove and put the moka pot on it.<small>Background textures</small></figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="demo-group">
+          <h3 id="fig-s1c">(c) RoboTwin 2.0 <span>clean split</span></h3>
+          <div class="demo-row">
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/robot-burger.jpg" width="320" height="240" aria-label="RoboTwin 2.0 rollout, clean split: place the burger and fries on the tray"><source src="assets/robot-burger.mp4" type="video/mp4"></video>
+              <figcaption>Place the burger and fries on the tray.</figcaption>
+            </figure>
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/robot-laptop.jpg" width="320" height="240" aria-label="RoboTwin 2.0 rollout, clean split: open the laptop"><source src="assets/robot-laptop.mp4" type="video/mp4"></video>
+              <figcaption>Open the laptop.</figcaption>
+            </figure>
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/robot-cans.jpg" width="320" height="240" aria-label="RoboTwin 2.0 rollout, clean split: place both cans in the plastic box"><source src="assets/robot-cans.mp4" type="video/mp4"></video>
+              <figcaption>Place both cans in the plastic box.</figcaption>
+            </figure>
+          </div>
+        </div>
+        <div class="demo-group">
+          <h3 id="fig-s1d">(d) RoboTwin 2.0 <span>randomized split</span></h3>
+          <div class="demo-row">
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/robot-rand-blocks.jpg" width="320" height="240" aria-label="RoboTwin 2.0 rollout, randomized split: stack the green block on the red block"><source src="assets/robot-rand-blocks.mp4" type="video/mp4"></video>
+              <figcaption>Stack the green block on the red block.</figcaption>
+            </figure>
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/robot-rand-shoes.jpg" width="320" height="240" aria-label="RoboTwin 2.0 rollout, randomized split: place both shoes in the shoebox"><source src="assets/robot-rand-shoes.mp4" type="video/mp4"></video>
+              <figcaption>Place both shoes in the shoebox.</figcaption>
+            </figure>
+            <figure class="demo">
+              <video data-autoplay muted loop playsinline preload="none" poster="assets/robot-rand-skillet.jpg" width="320" height="240" aria-label="RoboTwin 2.0 rollout, randomized split: put the bread in the skillet"><source src="assets/robot-rand-skillet.mp4" type="video/mp4"></video>
+              <figcaption>Put the bread in the skillet.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="neighbors">
+    <h2 class="rail"><span class="ref">Figure S2 · Tables S1–S2</span>Neighbors<small>Native vs. PRISM on unseen LIBERO-90 tasks</small></h2>
+    <div class="body">
+      <p class="intro"><strong class="ref">Figure S2.</strong> Query transitions from LIBERO-90 tasks unseen by the PRISM encoders, with their nearest neighbor from a <strong>different task</strong> under native features and under PRISM.</p>
+      <div class="toggle-row">
+        <div class="seg" role="group" aria-label="Visual features">
+          <button type="button" data-analysis-backbone="dino" aria-pressed="true">DINOv3</button>
+          <button type="button" data-analysis-backbone="wan" aria-pressed="false">WAN2.1-VAE</button>
+        </div>
+        <p class="note">Main-view clips · top-1 neighbor per representation</p>
+      </div>
+
+      <div class="neighbors" id="neighbor-explorer" aria-busy="true">
+        <div class="tabs" role="tablist" aria-label="Choose an example" id="neighbor-tabs"></div>
+        <div class="trio" id="neighbor-trio" aria-live="polite">
+          <figure class="query"><span class="who">Query<small>transition</small></span><video muted playsinline preload="auto" width="128" height="128"></video><figcaption></figcaption></figure>
+          <figure class="native"><span class="who">DINOv3 native<small>nearest neighbor</small></span><video muted playsinline preload="auto" width="128" height="128"></video><figcaption></figcaption></figure>
+          <figure class="prism"><span class="who">DINOv3 PRISM<small>nearest neighbor</small></span><video muted playsinline preload="auto" width="128" height="128"></video><figcaption></figcaption></figure>
+        </div>
+        <div class="player">
+          <button type="button" class="play paused" id="neighbor-play" aria-label="Play" disabled>
+            <svg class="i-pause" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 2h2v8H3zM7 2h2v8H7z" fill="currentColor"/></svg>
+            <svg class="i-play" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 1.5v9l7.5-4.5z" fill="currentColor"/></svg>
+          </button>
+          <input type="range" class="scrub" id="neighbor-scrub" min="0" max="16" step="1" value="0" aria-label="Step through all three clips together">
+          <output class="step" id="neighbor-step" for="neighbor-scrub">Step 0 / 16</output>
+        </div>
+      </div>
+      <p class="table-note">Recorded LIBERO-90 demonstrations, frames t to t+16 at 6 frames/s. Neighbors come from different tasks in an episode-disjoint gallery; scenes may repeat.</p>
+
+      <h3 class="table-title" id="table-s1"><span class="ref">Table S1.</span> Top-1 neighbors for both backbones <span>retrieved task and scene</span></h3>
+      <div class="table-wrap">
+        <table class="results nn-table">
+          <thead>
+            <tr>
+              <th scope="col">Representation</th>
+              <th scope="col">Retrieved task</th>
+              <th scope="col">Scene</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="group"><th colspan="3" scope="colgroup">(a) Open the microwave<span>Kitchen 7</span></th></tr>
+            <tr><th scope="row">DINOv3 native</th><td class="task">Put the white bowl on the plate</td><td>Kitchen 7<small class="tag">same scene</small></td></tr>
+            <tr class="prism"><th scope="row">DINOv3 PRISM</th><td class="task">Close the top drawer of the cabinet and put the black bowl on top of it</td><td>Kitchen 10</td></tr>
+            <tr><th scope="row">Wan-VAE native</th><td class="task">Put the white bowl on the plate</td><td>Kitchen 7<small class="tag">same scene</small></td></tr>
+            <tr class="prism"><th scope="row">Wan-VAE PRISM</th><td class="task">Put the white bowl on the plate</td><td>Kitchen 7<small class="tag">same scene</small></td></tr>
+
+            <tr class="group"><th colspan="3" scope="colgroup">(b) Put the right moka pot on the stove<span>Kitchen 8</span></th></tr>
+            <tr><th scope="row">DINOv3 native</th><td class="task">Turn off the stove</td><td>Kitchen 8<small class="tag">same scene</small></td></tr>
+            <tr class="prism"><th scope="row">DINOv3 PRISM</th><td class="task">Turn off the stove</td><td>Kitchen 8<small class="tag">same scene</small></td></tr>
+            <tr><th scope="row">Wan-VAE native</th><td class="task">Turn on the stove and put the frying pan on it</td><td>Kitchen 3</td></tr>
+            <tr class="prism"><th scope="row">Wan-VAE PRISM</th><td class="task">Turn off the stove</td><td>Kitchen 8<small class="tag">same scene</small></td></tr>
+
+            <tr class="group"><th colspan="3" scope="colgroup">(c) Pick up the tomato sauce and put it in the basket<span>Living Room 1</span></th></tr>
+            <tr><th scope="row">DINOv3 native</th><td class="task">Pick up the cream cheese box and put it in the basket</td><td>Living Room 1<small class="tag">same scene</small></td></tr>
+            <tr class="prism"><th scope="row">DINOv3 PRISM</th><td class="task">Pick up the orange juice and put it in the basket</td><td>Living Room 2</td></tr>
+            <tr><th scope="row">Wan-VAE native</th><td class="task">Pick up the alphabet soup and put it in the basket</td><td>Living Room 1<small class="tag">same scene</small></td></tr>
+            <tr class="prism"><th scope="row">Wan-VAE PRISM</th><td class="task">Pick up the orange juice and put it in the basket</td><td>Living Room 2</td></tr>
+
+            <tr class="group"><th colspan="3" scope="colgroup">(d) Pick up the red mug and place it to the right of the caddy<span>Study 3</span></th></tr>
+            <tr><th scope="row">DINOv3 native</th><td class="task">Pick up the white mug and place it to the right of the caddy</td><td>Study 3<small class="tag">same scene</small></td></tr>
+            <tr class="prism"><th scope="row">DINOv3 PRISM</th><td class="task">Pick up the book and place it in the right compartment of the caddy</td><td>Study 1</td></tr>
+            <tr><th scope="row">Wan-VAE native</th><td class="task">Pick up the white mug and place it to the right of the caddy</td><td>Study 3<small class="tag">same scene</small></td></tr>
+            <tr class="prism"><th scope="row">Wan-VAE PRISM</th><td class="task">Pick up the yellow and white mug and place it to the right of the caddy</td><td>Study 1</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">Across the four queries, 7 of 8 native neighbors come from the query's own scene, against 3 of 8 PRISM neighbors.</p>
+
+      <h3 class="table-title" id="table-s2"><span class="ref">Table S2.</span> All 882 queries <span>Table 6 of the paper, native → PRISM</span></h3>
+      <div class="table-wrap narrow">
+        <table class="results agg-table">
+          <thead>
+            <tr>
+              <th scope="col">Metric</th>
+              <th scope="col" class="n">Main view</th>
+              <th scope="col" class="n">Wrist view</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row">Jaccard@5 ↑</th><td class="n">0.170 → <b>0.512</b></td><td class="n">0.107 → <b>0.333</b></td></tr>
+            <tr><th scope="row">Action RMSE ↓</th><td class="n">0.400 → <b>0.365</b></td><td class="n">0.370 → <b>0.272</b></td></tr>
+            <tr><th scope="row">EEF error (m) ↓</th><td class="n">0.083 → <b>0.072</b></td><td class="n">0.089 → <b>0.076</b></td></tr>
+            <tr><th scope="row">Gripper agr. ↑</th><td class="n">0.758 → <b>0.793</b></td><td class="n">0.820 → <b>0.957</b></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="table-note">Leave-task-out retrieval over 882 episode-disjoint queries and 3,618 gallery transitions, top-5 neighbors. Jaccard@5 measures how often Wan-VAE and DINOv3 retrieve the same neighbors; the behavioral metrics compare each query with its neighbors, averaged over both backbones.</p>
+
+      <details class="protocol">
+        <summary>Retrieval protocol</summary>
+        <div class="prose">
+          <p>Neighbors are selected by cosine distance among 3,618 gallery transitions, excluding the query's task. The native readout spatially averages each frame's features; PRISM uses its full-grid posterior mean (3 × 4 × 4 tokens, 64 dimensions). Both see the observed future, so this tests representation geometry, not policy prediction. The four examples are illustrations.</p>        </div>
+      </details>
+    </div>
+  </section>
+
+  <section class="section" id="predictions">
+    <h2 class="rail"><span class="ref">Figure S3</span>Predictions<small>Predicted vs. recorded video</small></h2>
+    <div class="body">
+      <p class="intro">The predictions are visually faithful, yet this policy is clearly weaker than PRISM on LIBERO-Plus-2K (48.5% vs. 58.1%, averaged over two seeds). <strong>Native co-training is therefore not limited by failing to predict the future.</strong></p>
+      <p class="intro"><strong class="ref">Figure S3.</strong> Futures predicted by the native Wan-VAE world branch of the 0.25B model (native co-training, Table 1), decoded to RGB, against the recorded video.</p>
+      <div class="pred-grid">
+        <figure class="demo pred">
+          <div class="pred-frame"><span class="pred-label pred-col c1" aria-hidden="true">Agent view</span><span class="pred-label pred-col c2" aria-hidden="true">Wrist view</span><span class="pred-label pred-row r1" aria-hidden="true">Recorded</span><span class="pred-label pred-row r2" aria-hidden="true">Predicted</span>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/predictions/spatial_bowl_between_plate_ramekin.jpg" width="512" height="512" aria-label="Recorded and predicted futures, LIBERO-Spatial: pick up the black bowl between the plate and the ramekin and place it on the plate"><source src="assets/predictions/spatial_bowl_between_plate_ramekin.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption>Pick up the black bowl between the plate and the ramekin and place it on the plate.<small>LIBERO-Spatial</small></figcaption>
+        </figure>
+        <figure class="demo pred">
+          <div class="pred-frame"><span class="pred-label pred-col c1" aria-hidden="true">Agent view</span><span class="pred-label pred-col c2" aria-hidden="true">Wrist view</span><span class="pred-label pred-row r1" aria-hidden="true">Recorded</span><span class="pred-label pred-row r2" aria-hidden="true">Predicted</span>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/predictions/spatial_bowl_table_center.jpg" width="512" height="512" aria-label="Recorded and predicted futures, LIBERO-Spatial: pick up the black bowl from table center and place it on the plate"><source src="assets/predictions/spatial_bowl_table_center.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption>Pick up the black bowl from table center and place it on the plate.<small>LIBERO-Spatial</small></figcaption>
+        </figure>
+        <figure class="demo pred">
+          <div class="pred-frame"><span class="pred-label pred-col c1" aria-hidden="true">Agent view</span><span class="pred-label pred-col c2" aria-hidden="true">Wrist view</span><span class="pred-label pred-row r1" aria-hidden="true">Recorded</span><span class="pred-label pred-row r2" aria-hidden="true">Predicted</span>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/predictions/object_alphabet_soup.jpg" width="512" height="512" aria-label="Recorded and predicted futures, LIBERO-Object: pick up the alphabet soup and place it in the basket"><source src="assets/predictions/object_alphabet_soup.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption>Pick up the alphabet soup and place it in the basket.<small>LIBERO-Object</small></figcaption>
+        </figure>
+        <figure class="demo pred">
+          <div class="pred-frame"><span class="pred-label pred-col c1" aria-hidden="true">Agent view</span><span class="pred-label pred-col c2" aria-hidden="true">Wrist view</span><span class="pred-label pred-row r1" aria-hidden="true">Recorded</span><span class="pred-label pred-row r2" aria-hidden="true">Predicted</span>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/predictions/object_butter.jpg" width="512" height="512" aria-label="Recorded and predicted futures, LIBERO-Object: pick up the butter and place it in the basket"><source src="assets/predictions/object_butter.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption>Pick up the butter and place it in the basket.<small>LIBERO-Object</small></figcaption>
+        </figure>
+        <figure class="demo pred">
+          <div class="pred-frame"><span class="pred-label pred-col c1" aria-hidden="true">Agent view</span><span class="pred-label pred-col c2" aria-hidden="true">Wrist view</span><span class="pred-label pred-row r1" aria-hidden="true">Recorded</span><span class="pred-label pred-row r2" aria-hidden="true">Predicted</span>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/predictions/goal_open_middle_drawer.jpg" width="512" height="512" aria-label="Recorded and predicted futures, LIBERO-Goal: open the middle drawer of the cabinet"><source src="assets/predictions/goal_open_middle_drawer.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption>Open the middle drawer of the cabinet.<small>LIBERO-Goal</small></figcaption>
+        </figure>
+        <figure class="demo pred">
+          <div class="pred-frame"><span class="pred-label pred-col c1" aria-hidden="true">Agent view</span><span class="pred-label pred-col c2" aria-hidden="true">Wrist view</span><span class="pred-label pred-row r1" aria-hidden="true">Recorded</span><span class="pred-label pred-row r2" aria-hidden="true">Predicted</span>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/predictions/goal_bowl_on_plate.jpg" width="512" height="512" aria-label="Recorded and predicted futures, LIBERO-Goal: put the bowl on the plate"><source src="assets/predictions/goal_bowl_on_plate.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption>Put the bowl on the plate.<small>LIBERO-Goal</small></figcaption>
+        </figure>
+        <figure class="demo pred">
+          <div class="pred-frame"><span class="pred-label pred-col c1" aria-hidden="true">Agent view</span><span class="pred-label pred-col c2" aria-hidden="true">Wrist view</span><span class="pred-label pred-row r1" aria-hidden="true">Recorded</span><span class="pred-label pred-row r2" aria-hidden="true">Predicted</span>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/predictions/libero10_stove_moka_pot.jpg" width="512" height="512" aria-label="Recorded and predicted futures, LIBERO-10: turn on the stove and put the moka pot on it"><source src="assets/predictions/libero10_stove_moka_pot.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption>Turn on the stove and put the moka pot on it.<small>LIBERO-10</small></figcaption>
+        </figure>
+        <figure class="demo pred">
+          <div class="pred-frame"><span class="pred-label pred-col c1" aria-hidden="true">Agent view</span><span class="pred-label pred-col c2" aria-hidden="true">Wrist view</span><span class="pred-label pred-row r1" aria-hidden="true">Recorded</span><span class="pred-label pred-row r2" aria-hidden="true">Predicted</span>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/predictions/libero10_mug_in_microwave.jpg" width="512" height="512" aria-label="Recorded and predicted futures, LIBERO-10: put the yellow and white mug in the microwave and close it"><source src="assets/predictions/libero10_mug_in_microwave.mp4" type="video/mp4"></video>
+          </div>
+          <figcaption>Put the yellow and white mug in the microwave and close it.<small>LIBERO-10</small></figcaption>
+        </figure>
+      </div>
+      <p class="table-note">Each clip shows one 16-step forecast, slowed from 20 to 5 frames per second and paused briefly on its last frame. Recorded frames are decoded from their VAE latents.</p>
+    </div>
+  </section>
+
+  <section class="section" id="real-robot">
+    <h2 class="rail"><span class="ref">Figure S4</span>Real robot<small>Dual-arm Franka · head camera</small></h2>
+    <div class="body">
+      <p class="intro"><strong class="ref">Figure S4.</strong> Real-robot rollouts of a dual-arm pick-and-place task: the left arm moves the black box to the center, and the right arm places the light blue cup or the green tape into it. MiniWAM and native co-training share the same 0.25B architecture and the same demonstrations, and run alternately on the same scenes. Head camera, played at 4&times; speed.</p>
+      <div class="demos">
+        <div class="demo-group">
+          <h3 id="fig-s4a">(a) Paired trials <span>MiniWAM vs. native co-training on the same scene</span></h3>
+          <div class="carousel" data-carousel>
+            <div class="carousel-track" tabindex="0" aria-label="Paired real-robot trials">
+          <figure class="demo rr-slide" role="group" aria-roledescription="slide" aria-label="Pair 1 of 5">
+            <div class="rr-labels"><span class="rr-who mini">MiniWAM (ours)<b class="ok">Success</b></span><span class="rr-who">Native co-training<b class="bad">Failure</b></span></div>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/real/pair_01_miniwam_native.jpg" width="964" height="360" aria-label="Paired real-robot trial with the green tape: MiniWAM success on the left, native co-training failure on the right"><source src="assets/real/pair_01_miniwam_native.mp4" type="video/mp4"></video>
+            <figcaption>Place the green tape into the box.<small>Pair 1 of 5 · same scene</small></figcaption>
+          </figure>
+          <figure class="demo rr-slide" role="group" aria-roledescription="slide" aria-label="Pair 2 of 5">
+            <div class="rr-labels"><span class="rr-who mini">MiniWAM (ours)<b class="ok">Success</b></span><span class="rr-who">Native co-training<b class="ok">Success</b></span></div>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/real/pair_02_miniwam_native.jpg" width="964" height="360" aria-label="Paired real-robot trial with the light blue cup: MiniWAM success on the left, native co-training success on the right"><source src="assets/real/pair_02_miniwam_native.mp4" type="video/mp4"></video>
+            <figcaption>Place the light blue cup into the box.<small>Pair 2 of 5 · same scene</small></figcaption>
+          </figure>
+          <figure class="demo rr-slide" role="group" aria-roledescription="slide" aria-label="Pair 3 of 5">
+            <div class="rr-labels"><span class="rr-who mini">MiniWAM (ours)<b class="ok">Success</b></span><span class="rr-who">Native co-training<b class="ok">Success</b></span></div>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/real/pair_03_miniwam_native.jpg" width="964" height="360" aria-label="Paired real-robot trial with the light blue cup: MiniWAM success on the left, native co-training success on the right"><source src="assets/real/pair_03_miniwam_native.mp4" type="video/mp4"></video>
+            <figcaption>Place the light blue cup into the box.<small>Pair 3 of 5 · same scene</small></figcaption>
+          </figure>
+          <figure class="demo rr-slide" role="group" aria-roledescription="slide" aria-label="Pair 4 of 5">
+            <div class="rr-labels"><span class="rr-who mini">MiniWAM (ours)<b class="ok">Success</b></span><span class="rr-who">Native co-training<b class="bad">Failure</b></span></div>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/real/pair_04_miniwam_native.jpg" width="964" height="360" aria-label="Paired real-robot trial with the green tape: MiniWAM success on the left, native co-training failure on the right"><source src="assets/real/pair_04_miniwam_native.mp4" type="video/mp4"></video>
+            <figcaption>Place the green tape into the box.<small>Pair 4 of 5 · same scene</small></figcaption>
+          </figure>
+          <figure class="demo rr-slide" role="group" aria-roledescription="slide" aria-label="Pair 5 of 5">
+            <div class="rr-labels"><span class="rr-who mini">MiniWAM (ours)<b class="bad">Failure</b></span><span class="rr-who">Native co-training<b class="ok">Success</b></span></div>
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/real/pair_05_miniwam_native.jpg" width="964" height="360" aria-label="Paired real-robot trial with the green tape: MiniWAM failure on the left, native co-training success on the right"><source src="assets/real/pair_05_miniwam_native.mp4" type="video/mp4"></video>
+            <figcaption>Place the green tape into the box.<small>Pair 5 of 5 · same scene</small></figcaption>
+          </figure>
+            </div>
+            <div class="carousel-nav">
+              <button class="carousel-btn" type="button" data-step="-1" aria-label="Previous pair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+              <span class="carousel-count" aria-live="polite">1 / 5</span>
+              <button class="carousel-btn" type="button" data-step="1" aria-label="Next pair"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+            </div>
+          </div>
+        </div>
+        <div class="demo-group">
+          <h3 id="fig-s4b">(b) Lighting disturbances <span>unseen during training</span></h3>
+          <div class="demo-row two">
+          <figure class="demo">
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/real/lighting_01.jpg" width="480" height="360" aria-label="Real-robot rollout with the light blue cup: Room lighting changes during the episode"><source src="assets/real/lighting_01.mp4" type="video/mp4"></video>
+            <figcaption>Place the light blue cup into the box.<small>Room lighting changes during the episode</small></figcaption>
+          </figure>
+          <figure class="demo">
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/real/lighting_02.jpg" width="480" height="360" aria-label="Real-robot rollout with the green tape: Room lighting changes during the episode"><source src="assets/real/lighting_02.mp4" type="video/mp4"></video>
+            <figcaption>Place the green tape into the box.<small>Room lighting changes during the episode</small></figcaption>
+          </figure>
+          </div>
+        </div>
+        <div class="demo-group">
+          <h3 id="fig-s4c">(c) Recovery <span>retrying after a failed first attempt</span></h3>
+          <div class="demo-row two">
+          <figure class="demo">
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/real/retry_01.jpg" width="480" height="360" aria-label="Real-robot rollout with the green tape: Misses the first grasp, then retries"><source src="assets/real/retry_01.mp4" type="video/mp4"></video>
+            <figcaption>Place the green tape into the box.<small>Misses the first grasp, then retries</small></figcaption>
+          </figure>
+          <figure class="demo">
+            <video data-autoplay muted loop playsinline preload="none" poster="assets/real/retry_02.jpg" width="480" height="360" aria-label="Real-robot rollout with the light blue cup: Misses the first grasp, then retries"><source src="assets/real/retry_02.mp4" type="video/mp4"></video>
+            <figcaption>Place the light blue cup into the box.<small>Misses the first grasp, then retries</small></figcaption>
+          </figure>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="bottom">
+    <a class="to-top" href="#top" aria-label="Back to top" title="Back to top"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5M5 12l7-7 7 7"/></svg></a>
+    <p>MiniWAM · Anonymous ICLR 2027 submission 44899</p>
+  </footer>
+</div>
+</body>
+</html>
